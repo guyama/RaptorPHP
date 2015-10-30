@@ -5,7 +5,7 @@
 小巧、高效、安全，据说用了以后RP会变好 ;)    
 兼容新浪SAE，为移动端特别优化  
 项目主页：http://www.raptorphp.com  
-Github主页：http://www.github.com/raptorphp/  
+Github主页：https://github.com/guyama/RaptorPHP
 
 
 #安装
@@ -45,18 +45,20 @@ SAE 官方基于开源的一种二维码实现封装了一个二维码的SDK，�
 * 对于只有php的代码文件，建议省略结尾处的'?>',防止多余的空格或其他字符影响到代码。
 
 ###目录结构
-raptor/  RP框架主目录  
-raptor/core/  RP框架核心类库
-raptor/extend/ RP框架扩展类库
+```php
+raptor/  //RP框架主目录  
+raptor/core/  //RP框架核心类库
+raptor/extend/ //RP框架扩展类库
 
-app/ 项目总目录  
-app/appname/  自定义项目目录
-app/appname/index.php 项目入口文件  
+app/ //项目总目录  
+app/appname/  //自定义项目目录
+app/appname/index.php //项目入口文件  
  
-app/static/ 网站静态文件主目录 
-app/static/appname/ 项目静态文件目录  
-app/static/appname/common/ 项目通用静态文件
- 
+app/static/ //网站静态文件主目录 
+app/static/appname/ //项目静态文件目录  
+app/static/appname/common/ //项目通用静态文件
+``` 
+
 > 全部目录`不可写`，兼容新浪SAE，保障安全性
 
 ###命名空间：
@@ -72,6 +74,7 @@ app/static/appname/common/ 项目通用静态文件
 
 
 ####Raptor命名空间结构
+```php
 \Raptor  
 \Raptor\Core  
 \Raptor\Extend  
@@ -79,7 +82,7 @@ app/static/appname/common/ 项目通用静态文件
 \Appname  
 \Appname\Model  
 \Appname\Control  
-
+```
 
 ###文件名
 均以.php结尾
@@ -124,7 +127,10 @@ browser模式：在浏览器Console面板输出错误（目前版本仅支持Chr
 E_ERROR、E_PARSE、E_CORE_ERROR、E_CORE_WARNING、 E_COMPILE_ERROR、E_COMPILE_WARNING  以外级别的错误，将被系统自动捕捉并按指定的各式显示
 
 ###抛出异常：
-throw new Exception('自定义异常信息');
+```php
+throw new \Exception('自定义异常信息');
+```
+> 因使用命名空间，注意E前面需加斜线。
 
 ###各种调试的方法
 *方法一：exit();  die(); *
@@ -197,8 +203,22 @@ Db::select();
 ```
 *pdo模式2*
 ```php
-\Raptor\Core\Db::insert('INSERT INTO `article` (`title`,`isdel`) VALUES (:title,:isdel)',array('title'=>'test','isdel'=>'0'));  //传入完整insert sql和插入值数组
+\Raptor\Core\Db::insert( 'INSERT INTO `article` ( `title` , `isdel` ) VALUES ( :title , :isdel )',array( 'title'=>'test' , 'isdel'=>'0' ) );  //传入完整insert sql和插入值数组
 ```
+
+*连贯操作模式*
+
+
+Db::insert()
+	->table( 'article' )
+	->into( array('title'=>'test','test'=>'abc' ) )
+	->get();
+
+
+
+
+
+
 > 返回插入记录的id
 
 
@@ -211,21 +231,54 @@ Db::select();
 *连贯操作模式*
 ```php
 \Raptor\Core\Db::update()
-				->table('article')
-				->set( 'title','tefucst2' )
-				->set( 'test','yes2' )
-				->where( 'id','=','5' )
+				->table( 'article' )
+				->set( 'title' , 'tefucst2' )
+				->set( 'test' , 'yes2' )
+				->where( 'id' , '=' , '5' )
 				->get(); 
 ```
-*自增模式*
+*自增方法*
+对指定字段执行自增操作  
+Db::increase( 'string字段名' [, int自增值 ]);
+例子：  
 ```php
-Db::update()->table( 'article' )->increase( 'click' );
-Db::update()->table( 'article' )->increase( 'click' , 5 );
+//默认加1
+\Raptor\Core\Db::update()
+				 ->table( 'article' )
+				 ->increase( 'click' )
+				 ->where( 'id' , '=' , 1 )
+				 ->get();
+
+//指定增幅
+\Raptor\Core\Db::update()
+				 ->table( 'article' )
+				 ->increase( 'click' , 5 )
+				 ->where( 'id' , '=' , 1 )
+				 ->get();
 ```
-*自减模式*
+*自减方法*
+对指定字段执行自减操作  
+Db::decrease( 'string字段名' [, int自减值 [,bool字段数值范围是否含负数] ]);
+例子：  
 ```php
-Db::update()->table( 'article' )->decrease ( 'click' );
-Db::update()->table( 'article' )->decrease ( 'click' , 5 );
+//默认减1
+\Raptor\Core\Db::update()
+				 ->table( 'article' )
+				 ->decrease( 'click' )
+				 ->where( 'id' , '=' , 1 )
+				 ->get();
+//指定减幅
+\Raptor\Core\Db::update()
+				 ->table( 'article' )
+				 ->decrease( 'click' , 5 )
+				 ->where( 'id' , '=' , 1 )
+				 ->get();
+//字段可减为负数
+\Raptor\Core\Db::update()
+				 ->table( 'article' )
+				 ->decrease( 'click' , 5 , TRUE )
+				 ->where( 'id' , '=' , 1 )
+				 ->get(); 
 ```
 
 > 返回影响结果数，更新值和旧的一样时，结果数为0
@@ -235,20 +288,20 @@ Db::update()->table( 'article' )->decrease ( 'click' , 5 );
 ###删除
 *pdo模式*
 ```php
-\Raptor\Core\Db::delete( 'DELETE FROM `article` WHERE `isdel` = :isdel',array('isdel'=>'1') ); 
+\Raptor\Core\Db::delete( 'DELETE FROM `article` WHERE `isdel` = :isdel' , array( 'isdel'=>'1' ) ); 
 ```
 
 *连贯操作模式*
 ```php
-\Raptor\Core\Db::delete() //查询的字段，留空则默认查询全部
-				->table('article')  //表名
-				->where('isdel','!=','1')  //字段、操作符、值
-				->orWhere('title','LIKE','%test%')   //LIKE操作，百分号直接写在值里
+\Raptor\Core\Db::delete() 
+				->table( 'article' )  
+				->where( 'id' , '=' , '123' )
+				->where( 'isdel' , '=' , '1')
 				->get(); 
 ```
 
 > 返回影响结果数
-> 重要业务模块，尽量不要使用物理删除数据，而使用isdel字段标示。
+> 尽量不要使用物理删除数据，而使用isdel字段标示是否删除。
 
 
 
