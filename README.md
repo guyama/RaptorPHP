@@ -205,20 +205,13 @@ Db::select();
 ```php
 \Raptor\Core\Db::insert( 'INSERT INTO `article` ( `title` , `isdel` ) VALUES ( :title , :isdel )',array( 'title'=>'test' , 'isdel'=>'0' ) );  //传入完整insert sql和插入值数组
 ```
-
 *连贯操作模式*
-
-
+```php
 Db::insert()
 	->table( 'article' )
 	->into( array('title'=>'test','test'=>'abc' ) )
 	->get();
-
-
-
-
-
-
+```
 > 返回插入记录的id
 
 
@@ -311,6 +304,21 @@ Db::raw();
 ```
 > 原生表达式没有经过pdo的prepare过滤，存在注入风险，要谨慎使用。
 
+
+###连贯操作
+into()
+
+table()
+
+where()
+
+orWhere()
+
+join()
+
+orderby()
+
+limit()
 
 
 
